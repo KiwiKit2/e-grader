@@ -59,6 +59,21 @@ class ParentForm(forms.ModelForm):
         widgets = {'children': forms.CheckboxSelectMultiple}
 
 class GradeForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user and user.role == 'teacher':
+            from .models import Teacher, Student
+            teacher = Teacher.objects.get(user=user)
+            # only subjects the teacher teaches
+            self.fields['subject'].queryset = teacher.subjects.all()
+            # only students from this teacher's classes
+            self.fields['student'].queryset = Student.objects.filter(school=teacher.school)
+            # restrict and hide teacher field
+            self.fields['teacher'].queryset = Teacher.objects.filter(user=user)
+            self.fields['teacher'].widget = forms.HiddenInput()
+            # set initial teacher so hidden field is not empty
+            self.initial['teacher'] = teacher
     class Meta:
         model = Grade
         fields = ['student', 'subject', 'teacher', 'term', 'value']
@@ -66,6 +81,19 @@ class GradeForm(forms.ModelForm):
                    'teacher': forms.Select, 'term': forms.Select}
 
 class AttendanceForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user and user.role == 'teacher':
+            from .models import Teacher, Student
+            teacher = Teacher.objects.get(user=user)
+            self.fields['subject'].queryset = teacher.subjects.all()
+            self.fields['student'].queryset = Student.objects.filter(school=teacher.school)
+            # restrict and hide teacher field
+            self.fields['teacher'].queryset = Teacher.objects.filter(user=user)
+            self.fields['teacher'].widget = forms.HiddenInput()
+            # set initial teacher so hidden field is not empty
+            self.initial['teacher'] = teacher
     class Meta:
         model = Attendance
         fields = ['student', 'subject', 'teacher', 'date', 'status']

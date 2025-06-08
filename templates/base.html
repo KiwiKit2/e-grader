@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}E-Grader{% endblock %}</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-MYy9JgyR+Q4Zm3N1/vsgWnYDFh8x63vb3p+6D37Z+BxIk3V9M/s3hHVSZ+K0yucZ" crossorigin="anonymous">
+    <!-- Bootswatch Cerulean theme -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.2/cerulean/bootstrap.min.css">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <a class="navbar-brand" href="{% url 'dashboard' %}">E-Grader</a>
-    <div class="collapse navbar-collapse">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
             {% if user.is_authenticated %}
                 <li class="nav-item">
@@ -25,7 +29,7 @@
         </ul>
     </div>
 </nav>
-<div class="container mt-4">
+<div class="container-fluid mt-4">
     {% block content %}{% endblock %}
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdGOb8dUs/0fgfDmb+2H25G68kJ4GT337257rytp9f8bGW6Wdw5r2sepkZCUzo" crossorigin="anonymous"></script>

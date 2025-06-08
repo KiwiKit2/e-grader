@@ -285,12 +285,22 @@ class GradeCreateView(CreateView):
     template_name = 'grades/grade_form.html'
     success_url = reverse_lazy('grade_list')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
 @method_decorator(login_required, name='dispatch')
 class GradeUpdateView(UpdateView):
     model = Grade
     form_class = GradeForm
     template_name = 'grades/grade_form.html'
     success_url = reverse_lazy('grade_list')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
 @method_decorator(login_required, name='dispatch')
 class GradeDeleteView(DeleteView):
@@ -325,12 +335,22 @@ class AttendanceCreateView(CreateView):
     template_name = 'attendance/attendance_form.html'
     success_url = reverse_lazy('attendance_list')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
 @method_decorator(login_required, name='dispatch')
 class AttendanceUpdateView(UpdateView):
     model = Attendance
     form_class = AttendanceForm
     template_name = 'attendance/attendance_form.html'
     success_url = reverse_lazy('attendance_list')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
 @method_decorator(login_required, name='dispatch')
 class AttendanceDeleteView(DeleteView):

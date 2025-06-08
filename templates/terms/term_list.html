@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Terms{% endblock %}
+{% block content %}
+<h2>Program Terms</h2>
+<a class="btn btn-primary mb-2" href="{% url 'term_add' %}">Add Term</a>
+<ul class="list-group">
+{% for term in terms %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ term.name }} ({{ term.school.name }})
+        <span>
+            <a href="{% url 'term_edit' term.pk %}" class="btn btn-sm btn-secondary">Edit</a>
+            <a href="{% url 'term_delete' term.pk %}" class="btn btn-sm btn-danger">Delete</a>
+        </span>
+    </li>
+{% empty %}
+    <li class="list-group-item">No terms available.</li>
+{% endfor %}
+</ul>
+{% endblock %}

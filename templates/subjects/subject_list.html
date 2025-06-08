@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Subjects{% endblock %}
+{% block content %}
+<h2>Subjects</h2>
+<a class="btn btn-primary mb-2" href="{% url 'subject_add' %}">Add Subject</a>
+<ul class="list-group">
+{% for subject in subjects %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ subject.name }}
+        <span>
+            <a href="{% url 'subject_edit' subject.pk %}" class="btn btn-sm btn-secondary">Edit</a>
+            <a href="{% url 'subject_delete' subject.pk %}" class="btn btn-sm btn-danger">Delete</a>
+        </span>
+    </li>
+{% empty %}
+    <li class="list-group-item">No subjects available.</li>
+{% endfor %}
+</ul>
+{% endblock %}

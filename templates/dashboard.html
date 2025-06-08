@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2>Dashboard - {{ role|title }}</h2>
+
+{% if role == 'teacher' %}
+    <div class="mb-3">
+        <a class="btn btn-primary" href="{% url 'grade_list' %}">Manage Grades</a>
+        <a class="btn btn-primary" href="{% url 'attendance_list' %}">Manage Attendance</a>
+    </div>
+    <h3>My Grades</h3>
+    <ul>
+    {% for g in grades %}
+        <li>{{ g.student.user.get_full_name }}: {{ g.subject.name }} - {{ g.value }}</li>
+    {% empty %}
+        <li>No grades found.</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+{% if role == 'parent' %}
+    <div class="mb-3">
+        <a class="btn btn-primary" href="{% url 'grade_list' %}">View Child Grades</a>
+        <a class="btn btn-primary" href="{% url 'attendance_list' %}">View Child Attendance</a>
+    </div>
+    <h3>Children Grades</h3>
+    <ul>
+    {% for g in grades %}
+        <li>{{ g.student.user.get_full_name }}: {{ g.subject.name }} - {{ g.value }}</li>
+    {% empty %}
+        <li>No grades found.</li>
+    {% endfor %}
+    </ul>
+    <h3>Children Attendance</h3>
+    <ul>
+    {% for a in attendance %}
+        <li>{{ a.date }} - {{ a.student.user.get_full_name }}: {{ a.status }}</li>
+    {% empty %}
+        <li>No attendance records found.</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+{% if role == 'student' %}
+    <div class="mb-3">
+        <a class="btn btn-primary" href="{% url 'grade_list' %}">View My Grades</a>
+        <a class="btn btn-primary" href="{% url 'attendance_list' %}">View My Attendance</a>
+    </div>
+    <h3>My Grades</h3>
+    <ul>
+    {% for g in grades %}
+        <li>{{ g.subject.name }} - {{ g.value }}</li>
+    {% empty %}
+        <li>No grades found.</li>
+    {% endfor %}
+    </ul>
+    <h3>My Attendance</h3>
+    <ul>
+    {% for a in attendance %}
+        <li>{{ a.date }}: {{ a.status }}</li>
+    {% empty %}
+        <li>No attendance records found.</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+{% if role == 'director' or role == 'admin' %}
+    <div class="mb-3">
+        <a class="btn btn-secondary" href="{% url 'school_list' %}">Manage Schools</a>
+        <a class="btn btn-secondary" href="{% url 'classyear_list' %}">Manage Classes</a>
+        <a class="btn btn-secondary" href="{% url 'subject_list' %}">Manage Subjects</a>
+        <a class="btn btn-secondary" href="{% url 'term_list' %}">Manage Terms</a>
+        <a class="btn btn-secondary" href="{% url 'teacher_list' %}">Manage Teachers</a>
+        <a class="btn btn-secondary" href="{% url 'student_list' %}">Manage Students</a>
+        <a class="btn btn-secondary" href="{% url 'parent_list' %}">Manage Parents</a>
+        <a class="btn btn-secondary" href="{% url 'grade_list' %}">View All Grades</a>
+        <a class="btn btn-secondary" href="{% url 'attendance_list' %}">View All Attendance</a>
+    </div>
+    <h3>All Schools</h3>
+    <ul>
+    {% for school in schools %}
+        <li>{{ school.name }}</li>
+    {% endfor %}
+    </ul>
+    <h3>Overall Grades</h3>
+    <ul>
+    {% for g in grades %}
+        <li>{{ g.student.user.get_full_name }} ({{ g.subject.name }}): {{ g.value }}</li>
+    {% endfor %}
+    </ul>
+    <h3>Overall Attendance</h3>
+    <ul>
+    {% for a in attendance %}
+        <li>{{ a.date }} - {{ a.student.user.get_full_name }}: {{ a.status }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}

@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, School, ClassYear, Teacher, Subject, ProgramTerm, Director, Student, Parent, Grade, Attendance
+from .models import User, School, ClassYear, Teacher, Subject, ProgramTerm, Director, Student, Parent, Grade, Attendance, TeachingAssignment
 
 class UserRegistrationForm(UserCreationForm):
     role = forms.ChoiceField(choices=User._meta.get_field('role').choices)
@@ -118,3 +118,8 @@ class ChildStudentForm(forms.ModelForm):
         widgets = {
             'class_year': forms.Select,
         }
+
+class TeachingAssignmentForm(forms.ModelForm):
+    class Meta:
+        model = TeachingAssignment
+        fields = ['term', 'teacher', 'subject']

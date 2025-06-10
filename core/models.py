@@ -104,3 +104,14 @@ class Attendance(models.Model):
 
     def __str__(self):
         return f"{self.date} - {self.student}: {self.status}"
+
+class TeachingAssignment(models.Model):
+    term = models.ForeignKey(ProgramTerm, on_delete=models.CASCADE, related_name='assignments')
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='assignments')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='assignments')
+
+    class Meta:
+        unique_together = ('term', 'teacher', 'subject')
+
+    def __str__(self):
+        return f"{self.term.name}: {self.teacher.user.get_full_name()} - {self.subject.name}"

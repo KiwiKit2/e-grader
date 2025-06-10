@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Teaching Assignments{% endblock %}
+{% block content %}
+<h2>Teaching Assignments</h2>
+<a class="btn btn-primary mb-2" href="{% url 'assignment_add' %}">Add Assignment</a>
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead class="thead-light">
+      <tr>
+        <th>Term</th>
+        <th>Teacher</th>
+        <th>Subject</th>
+        <th class="text-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for assignment in assignments %}
+      <tr>
+        <td>{{ assignment.term.name }}</td>
+        <td>{{ assignment.teacher.user.get_full_name }}</td>
+        <td>{{ assignment.subject.name }}</td>
+        <td class="text-right">
+          <a href="{% url 'assignment_edit' assignment.pk %}" class="btn btn-sm btn-secondary">Edit</a>
+          <a href="{% url 'assignment_delete' assignment.pk %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4">No assignments found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

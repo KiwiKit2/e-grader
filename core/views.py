@@ -4,11 +4,13 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
-from .forms import UserRegistrationForm, SchoolForm, ClassYearForm, TeacherForm, SubjectForm, ProgramTermForm
-from .models import School, Grade, Attendance, ClassYear, Teacher, Subject, ProgramTerm, Director, Student, Parent
+from django.db.models import Avg
+from .forms import UserRegistrationForm, SchoolForm, ClassYearForm, TeacherForm, SubjectForm, ProgramTermForm, TeachingAssignmentForm
+from .models import School, Grade, Attendance, ClassYear, Teacher, Subject, ProgramTerm, Director, Student, Parent, TeachingAssignment
 from django.views import View
 from .forms import ChildUserForm, ChildStudentForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseForbidden
 
 class SignupView(FormView):
     template_name = 'registration/signup.html'
@@ -42,6 +44,35 @@ class DashboardView(TemplateView):
             context['schools'] = School.objects.all()
             context['grades'] = Grade.objects.all()
             context['attendance'] = Attendance.objects.all()
+        return context
+
+@method_decorator(login_required, name='dispatch')
+class StatisticsView(TemplateView):
+    template_name = 'statistics.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        # only director or admin
+        if request.user.role not in ['director', 'admin']:
+            return HttpResponseForbidden("You do not have permission to view this page.")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        from .models import School, Teacher, Student, Parent, Grade, Attendance, Subject
+        context['total_schools'] = School.objects.count()
+        context['total_teachers'] = Teacher.objects.count()
+        context['total_students'] = Student.objects.count()
+        context['total_parents'] = Parent.objects.count()
+        context['total_subjects'] = Subject.objects.count()
+        context['total_grades'] = Grade.objects.count()
+        context['total_attendance'] = Attendance.objects.count()
+        from .models import TeachingAssignment
+        context['total_assignments'] = TeachingAssignment.objects.count()
+        # average grade per subject
+        context['avg_per_subject'] = (
+            Grade.objects.values('subject__name')
+            .annotate(average=Avg('value'))
+        )
         return context
 
 @method_decorator(login_required, name='dispatch')
@@ -383,3 +414,53 @@ class ParentAddChildView(LoginRequiredMixin, View):
             parent_profile.children.add(child_profile)
             return redirect('parent_list')
         return render(request, self.template_name, {'user_form': user_form, 'student_form': student_form})
+
+@method_decorator(login_required, name='dispatch')
+class TeachingAssignmentListView(ListView):
+    model = TeachingAssignment
+    template_name = 'assignments/assignment_list.html'
+    context_object_name = 'assignments'
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        user = self.request.user
+        if user.role in ['director', 'admin']:
+            return qs
+        if user.role == 'teacher':
+            return qs.filter(teacher__user=user)
+        return qs.none()
+
+@method_decorator(login_required, name='dispatch')
+class TeachingAssignmentCreateView(CreateView):
+    model = TeachingAssignment
+    form_class = TeachingAssignmentForm
+    template_name = 'assignments/assignment_form.html'
+    success_url = reverse_lazy('assignment_list')
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.role not in ['director', 'admin']:
+            return HttpResponseForbidden("You do not have permission to perform this action.")
+        return super().dispatch(request, *args, **kwargs)
+
+@method_decorator(login_required, name='dispatch')
+class TeachingAssignmentUpdateView(UpdateView):
+    model = TeachingAssignment
+    form_class = TeachingAssignmentForm
+    template_name = 'assignments/assignment_form.html'
+    success_url = reverse_lazy('assignment_list')
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.role not in ['director', 'admin']:
+            return HttpResponseForbidden("You do not have permission to perform this action.")
+        return super().dispatch(request, *args, **kwargs)
+
+@method_decorator(login_required, name='dispatch')
+class TeachingAssignmentDeleteView(DeleteView):
+    model = TeachingAssignment
+    template_name = 'assignments/assignment_confirm_delete.html'
+    success_url = reverse_lazy('assignment_list')
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.role not in ['director', 'admin']:
+            return HttpResponseForbidden("You do not have permission to perform this action.")
+        return super().dispatch(request, *args, **kwargs)

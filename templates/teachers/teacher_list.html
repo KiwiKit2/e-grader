@@ -15,7 +15,7 @@
     <tbody>
       {% for teacher in teachers %}
       <tr>
-        <td>{{ teacher.user.get_full_name }}</td>
+        <td>{{ teacher.user.username }}</td>
         <td>{{ teacher.school.name }}</td>
         <td class="text-right">
           <a href="{% url 'teacher_edit' teacher.pk %}" class="btn btn-sm btn-secondary">Edit</a>

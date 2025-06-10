@@ -10,7 +10,8 @@ from .views import (
     ParentListView, ParentCreateView, ParentUpdateView, ParentDeleteView,
     GradeListView, GradeCreateView, GradeUpdateView, GradeDeleteView,
     AttendanceListView, AttendanceCreateView, AttendanceUpdateView, AttendanceDeleteView,
-    ParentAddChildView
+    ParentAddChildView, StatisticsView,
+    TeachingAssignmentListView, TeachingAssignmentCreateView, TeachingAssignmentUpdateView, TeachingAssignmentDeleteView
 )
 
 urlpatterns = [
@@ -57,4 +58,13 @@ urlpatterns = [
     path('attendance/<int:pk>/edit/', AttendanceUpdateView.as_view(), name='attendance_edit'),
     path('attendance/<int:pk>/delete/', AttendanceDeleteView.as_view(), name='attendance_delete'),
     path('parents/add-child/', ParentAddChildView.as_view(), name='parent_add_child'),
+    
+    # Teaching Assignments CRUD
+    path('assignments/', TeachingAssignmentListView.as_view(), name='assignment_list'),
+    path('assignments/add/', TeachingAssignmentCreateView.as_view(), name='assignment_add'),
+    path('assignments/<int:pk>/edit/', TeachingAssignmentUpdateView.as_view(), name='assignment_edit'),
+    path('assignments/<int:pk>/delete/', TeachingAssignmentDeleteView.as_view(), name='assignment_delete'),
+
+    # Statistics dashboard for director/admin
+    path('statistics/', StatisticsView.as_view(), name='statistics'),
 ]

@@ -3,18 +3,27 @@
 {% block content %}
 <h2>Parents</h2>
 <a class="btn btn-primary mb-2" href="{% url 'parent_add' %}">Add Parent</a>
-<ul class="list-group">
-{% for parent in parents %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
--        {{ parent.user.get_full_name }}
-+        {{ parent.user.username }}
-        <span>
-            <a href="{% url 'parent_edit' parent.pk %}" class="btn btn-sm btn-secondary">Edit</a>
-            <a href="{% url 'parent_delete' parent.pk %}" class="btn btn-sm btn-danger">Delete</a>
-        </span>
-    </li>
-{% empty %}
-    <li class="list-group-item">No parents available.</li>
-{% endfor %}
-</ul>
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead class="thead-light">
+      <tr>
+        <th>Username</th>
+        <th class="text-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for parent in parents %}
+      <tr>
+        <td>{{ parent.user.username }}</td>
+        <td class="text-right">
+          <a href="{% url 'parent_edit' parent.pk %}" class="btn btn-sm btn-secondary">Edit</a>
+          <a href="{% url 'parent_delete' parent.pk %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="2">No parents available.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

@@ -3,17 +3,31 @@
 {% block content %}
 <h2>Grades</h2>
 <a class="btn btn-primary mb-2" href="{% url 'grade_add' %}">Add Grade</a>
-<ul class="list-group">
-{% for g in grades %}
-  <li class="list-group-item d-flex justify-content-between align-items-center">
-    {{ g.student.user.get_full_name }} - {{ g.subject.name }}: {{ g.value }}
-    <span>
-      <a href="{% url 'grade_edit' g.pk %}" class="btn btn-sm btn-secondary">Edit</a>
-      <a href="{% url 'grade_delete' g.pk %}" class="btn btn-sm btn-danger">Delete</a>
-    </span>
-  </li>
-{% empty %}
-  <li class="list-group-item">No grades available.</li>
-{% endfor %}
-</ul>
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead class="thead-light">
+      <tr>
+        <th>Student</th>
+        <th>Subject</th>
+        <th>Grade</th>
+        <th class="text-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for g in grades %}
+      <tr>
+        <td>{{ g.student.user.get_full_name }}</td>
+        <td>{{ g.subject.name }}</td>
+        <td>{{ g.value }}</td>
+        <td class="text-right">
+          <a href="{% url 'grade_edit' g.pk %}" class="btn btn-sm btn-secondary">Edit</a>
+          <a href="{% url 'grade_delete' g.pk %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4">No grades available.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

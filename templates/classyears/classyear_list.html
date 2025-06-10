@@ -3,17 +3,31 @@
 {% block content %}
 <h2>Class Years</h2>
 <a class="btn btn-primary mb-2" href="{% url 'classyear_add' %}">Add Class Year</a>
-<ul class="list-group">
-{% for cy in classyears %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-        {{ cy.school.name }} - {{ cy.get_level_display }} {{ cy.section }}
-        <span>
-            <a href="{% url 'classyear_edit' cy.pk %}" class="btn btn-sm btn-secondary">Edit</a>
-            <a href="{% url 'classyear_delete' cy.pk %}" class="btn btn-sm btn-danger">Delete</a>
-        </span>
-    </li>
-{% empty %}
-    <li class="list-group-item">No class years available.</li>
-{% endfor %}
-</ul>
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead class="thead-light">
+      <tr>
+        <th>School</th>
+        <th>Level</th>
+        <th>Section</th>
+        <th class="text-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cy in classyears %}
+      <tr>
+        <td>{{ cy.school.name }}</td>
+        <td>{{ cy.get_level_display }}</td>
+        <td>{{ cy.section }}</td>
+        <td class="text-right">
+          <a href="{% url 'classyear_edit' cy.pk %}" class="btn btn-sm btn-secondary">Edit</a>
+          <a href="{% url 'classyear_delete' cy.pk %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4">No class years available.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

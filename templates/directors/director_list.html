@@ -3,17 +3,29 @@
 {% block content %}
 <h2>Directors</h2>
 <a class="btn btn-primary mb-2" href="{% url 'director_add' %}">Add Director</a>
-<ul class="list-group">
-{% for d in directors %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-        {{ d.user.get_full_name }} ({{ d.school.name }})
-        <span>
-            <a href="{% url 'director_edit' d.pk %}" class="btn btn-sm btn-secondary">Edit</a>
-            <a href="{% url 'director_delete' d.pk %}" class="btn btn-sm btn-danger">Delete</a>
-        </span>
-    </li>
-{% empty %}
-    <li class="list-group-item">No directors available.</li>
-{% endfor %}
-</ul>
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead class="thead-light">
+      <tr>
+        <th>Username</th>
+        <th>School</th>
+        <th class="text-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in directors %}
+      <tr>
+        <td>{{ d.user.username }}</td>
+        <td>{{ d.school.name }}</td>
+        <td class="text-right">
+          <a href="{% url 'director_edit' d.pk %}" class="btn btn-sm btn-secondary">Edit</a>
+          <a href="{% url 'director_delete' d.pk %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="3">No directors available.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

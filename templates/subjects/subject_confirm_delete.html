@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
 {% block title %}Delete Subject{% endblock %}
 {% block content %}
-<h2>Delete Subject</h2>
-<p>Are you sure you want to delete subject "{{ object.name }}"?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Delete</button>
-    <a href="{% url 'subject_list' %}" class="btn btn-secondary">Cancel</a>
-</form>
+<div class="card">
+  <div class="card-body">
+    <h2>Delete Subject</h2>
+    <p>Are you sure you want to delete subject "{{ object.name }}"?</p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Delete</button>
+      <a href="{% url 'subject_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+</div>
 {% endblock %}

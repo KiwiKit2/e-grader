@@ -17,10 +17,7 @@ A Django application for managing student grades and attendance, built with Boot
 8. [Running the Application](#running-the-application)
 9. [Testing & Coverage](#testing--coverage)
 10. [Directory Structure](#directory-structure)
-11. [Screenshots](#screenshots)
-12. [Future Improvements](#future-improvements)
-13. [Contributing](#contributing)
-14. [License](#license)
+
 
 ---
 
@@ -141,18 +138,3 @@ manage.py       # Django CLI
 README.md       # This documentation
 requirements.txt# Python dependencies
 ```
-
-## Screenshots
-*Add screenshots of each dashboard, list, form, and term detail page here.*
-
-## Future Improvements
-- **Charts** for grade distributions (e.g., Chart.js)
-- **Export** reports (CSV/PDF)
-- **Notifications** for attendance alerts
-- **Internationalization** (i18n) for Bulgarian, English, etc.
-
-## Contributing
-Contributions are welcome! Please open issues or pull requests for enhancements or bug fixes.
-
-## License
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.

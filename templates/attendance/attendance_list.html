@@ -1,31 +1,47 @@
 {% extends 'base.html' %}
 {% block title %}Attendance Records{% endblock %}
 {% block content %}
-<h2>Attendance</h2>
-<a class="btn btn-primary mb-2" href="{% url 'attendance_add' %}">Add Attendance</a>
+<h2>Attendance Records</h2>
+{% if user.role == 'teacher' or user.role == 'director' or user.role == 'admin' %}
+  <a class="btn btn-primary mb-2" href="{% url 'attendance_add' %}">Add Attendance</a>
+{% endif %}
 <div class="table-responsive">
   <table class="table table-hover">
     <thead class="thead-light">
       <tr>
-        <th>Date</th>
         <th>Student</th>
+        <th>Subject</th>
+        <th>Teacher</th>
+        <th>Date</th>
         <th>Status</th>
+        {% if user.role == 'teacher' or user.role == 'director' or user.role == 'admin' %}
         <th class="text-right">Actions</th>
+        {% endif %}
       </tr>
     </thead>
     <tbody>
-      {% for a in attendance %}
+      {% for record in attendance %}
       <tr>
-        <td>{{ a.date }}</td>
-        <td>{{ a.student.user.get_full_name }}</td>
-        <td>{{ a.status }}</td>
+        <td>{{ record.student.user.get_full_name }}</td>
+        <td>{{ record.subject.name }}</td>
+        <td>{{ record.teacher.user.get_full_name }}</td>
+        <td>{{ record.date }}</td>
+        <td>{{ record.status }}</td>
+        {% if user.role == 'teacher' or user.role == 'director' or user.role == 'admin' %}
         <td class="text-right">
-          <a href="{% url 'attendance_edit' a.pk %}" class="btn btn-sm btn-secondary">Edit</a>
-          <a href="{% url 'attendance_delete' a.pk %}" class="btn btn-sm btn-danger">Delete</a>
+          <a href="{% url 'attendance_edit' record.pk %}" class="btn btn-sm btn-secondary">Edit</a>
+          <a href="{% url 'attendance_delete' record.pk %}" class="btn btn-sm btn-danger">Delete</a>
         </td>
+        {% endif %}
       </tr>
       {% empty %}
-      <tr><td colspan="4">No attendance records available.</td></tr>
+      <tr>
+        {% if user.role == 'teacher' or user.role == 'director' or user.role == 'admin' %}
+          <td colspan="6">No attendance records found.</td>
+        {% else %}
+          <td colspan="5">No attendance records found.</td>
+        {% endif %}
+      </tr>
       {% endfor %}
     </tbody>
   </table>

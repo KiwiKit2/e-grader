@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Term Details - {{ term.name }}{% endblock %}
+{% block content %}
+<h2>{{ term.name }} ({{ term.school.name }})</h2>
+<p><strong>Start Date:</strong> {{ term.start_date }} &nbsp; <strong>End Date:</strong> {{ term.end_date }}</p>
+<div class="mb-3">
+  <a class="btn btn-primary" href="{% url 'assignment_add' %}?term={{ term.pk }}">Add Assignment</a>
+  <a class="btn btn-secondary" href="{% url 'term_list' %}">Back to Terms</a>
+</div>
+<h3>Assigned Subjects & Teachers</h3>
+<div class="table-responsive">
+  <table class="table table-bordered">
+    <thead class="thead-light">
+      <tr>
+        <th>Subject</th>
+        <th>Teacher</th>
+        <th class="text-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for assignment in assignments %}
+      <tr>
+        <td>{{ assignment.subject.name }}</td>
+        <td>{{ assignment.teacher.user.get_full_name }}</td>
+        <td class="text-right">
+          <a href="{% url 'assignment_edit' assignment.pk %}" class="btn btn-sm btn-secondary">Edit</a>
+          <a href="{% url 'assignment_delete' assignment.pk %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="3">No assignments for this term.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

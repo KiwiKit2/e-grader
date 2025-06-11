@@ -320,3 +320,49 @@ class ParentAddChildTests(TestCase):
         self.assertEqual(student_profile.class_year, self.class_year)
         # linked to parent
         self.assertIn(student_profile, self.parent_profile.children.all())
+
+class PermissionTests(TestCase):
+    def setUp(self):
+        # common setup
+        self.school = School.objects.create(name='Perm School', address='Addr')
+        self.term = ProgramTerm.objects.create(
+            school=self.school, name='PermTerm',
+            start_date=timezone.now().date(), end_date=timezone.now().date()
+        )
+        self.subject = Subject.objects.create(name='PermSubj')
+        self.term.subjects.add(self.subject)
+        # users
+        self.teacher_user = User.objects.create_user('t', password='pass', role='teacher')
+        self.teacher = Teacher.objects.create(user=self.teacher_user, school=self.school)
+        self.teacher.subjects.add(self.subject)
+        self.student_user = User.objects.create_user('s', password='pass', role='student')
+        self.student = Student.objects.create(user=self.student_user, school=self.school, class_year=None)
+        self.parent_user = User.objects.create_user('p', password='pass', role='parent')
+        self.parent = Parent.objects.create(user=self.parent_user)
+        self.parent.children.add(self.student)
+        self.director_user = User.objects.create_user('d', password='pass', role='director')
+        self.director = Director.objects.create(user=self.director_user, school=self.school)
+        self.admin_user = User.objects.create_user('a', password='pass', role='admin')
+
+    def test_statistics_forbidden(self):
+        # only director/admin allowed
+        for user, should_pass in [(self.teacher_user, False), (self.student_user, False), (self.parent_user, False), (self.director_user, True), (self.admin_user, True)]:
+            self.client.login(username=user.username, password='pass')
+            resp = self.client.get(reverse('statistics'))
+            self.assertEqual(resp.status_code, 200 if should_pass else 403)
+
+    def test_term_detail_forbidden(self):
+        # only director/admin allowed to view term detail
+        url = reverse('term_detail', kwargs={'pk': self.term.pk})
+        for user, should_pass in [(self.teacher_user, False), (self.student_user, False), (self.parent_user, False), (self.director_user, True), (self.admin_user, True)]:
+            self.client.login(username=user.username, password='pass')
+            resp = self.client.get(url)
+            self.assertEqual(resp.status_code, 200 if should_pass else 403)
+
+    def test_assignment_create_forbidden(self):
+        # only director/admin allowed to create assignment
+        url = reverse('assignment_add')
+        for user, should_pass in [(self.teacher_user, False), (self.student_user, False), (self.parent_user, False), (self.director_user, True), (self.admin_user, True)]:
+            self.client.login(username=user.username, password='pass')
+            resp = self.client.get(url)
+            self.assertEqual(resp.status_code, 200 if should_pass else 403)

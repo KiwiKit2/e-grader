@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.views.generic import TemplateView, FormView, ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import TemplateView, FormView, ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -11,6 +11,7 @@ from django.views import View
 from .forms import ChildUserForm, ChildStudentForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseForbidden
+from django import forms
 
 class SignupView(FormView):
     template_name = 'registration/signup.html'
@@ -204,6 +205,23 @@ class ProgramTermDeleteView(DeleteView):
     model = ProgramTerm
     template_name = 'terms/term_confirm_delete.html'
     success_url = reverse_lazy('term_list')
+
+@method_decorator(login_required, name='dispatch')
+class ProgramTermDetailView(DetailView):
+    model = ProgramTerm
+    template_name = 'terms/term_detail.html'
+    context_object_name = 'term'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.role not in ['director', 'admin']:
+            return HttpResponseForbidden("You do not have permission to view this page.")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # assignments for this term
+        context['assignments'] = TeachingAssignment.objects.filter(term=self.object)
+        return context
 
 from .models import Director, Student, Parent, Grade, Attendance
 from .forms import DirectorForm, StudentForm, ParentForm, GradeForm, AttendanceForm
@@ -441,6 +459,20 @@ class TeachingAssignmentCreateView(CreateView):
         if request.user.role not in ['director', 'admin']:
             return HttpResponseForbidden("You do not have permission to perform this action.")
         return super().dispatch(request, *args, **kwargs)
+
+    def get_initial(self):
+        initial = super().get_initial() or {}
+        term_id = self.request.GET.get('term')
+        if term_id:
+            initial['term'] = term_id
+        return initial
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        # hide term field if provided via initial
+        if form.initial.get('term'):
+            form.fields['term'].widget = forms.HiddenInput()
+        return form
 
 @method_decorator(login_required, name='dispatch')
 class TeachingAssignmentUpdateView(UpdateView):

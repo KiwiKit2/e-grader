@@ -15,7 +15,7 @@
     <tbody>
       {% for term in terms %}
       <tr>
-        <td>{{ term.name }}</td>
+        <td><a href="{% url 'term_detail' term.pk %}">{{ term.name }}</a></td>
         <td>{{ term.school.name }}</td>
         <td class="text-right">
           <a href="{% url 'term_edit' term.pk %}" class="btn btn-sm btn-secondary">Edit</a>

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Delete Parent{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h2>Delete Parent</h2>
+    <p>Are you sure you want to delete parent "{{ object.user.username }}"?</p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Delete</button>
+      <a href="{% url 'parent_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
